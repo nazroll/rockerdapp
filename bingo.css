@@ -6,7 +6,11 @@
     padding: 12px 0 12px 0;
 }
 #footer {
-    min-height: 24px;
+    text-align: center;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-top: 12px;
 }
 .box {
     border: 1px solid #ced4da;
@@ -69,6 +73,16 @@
 
 .choose-your-side {
     padding-top: 12px;
+}
+.choose-your-side p {
+    text-align: center;
+    margin-top: 24px;
+}
+.choose-side {
+    padding: 12px 24px;
+    margin-left: 12px;
+    margin-right: 12px;
+    background-color: #eee;
 }
 
 /* Swipe Functionality Styles */
