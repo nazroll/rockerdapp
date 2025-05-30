@@ -1,4 +1,4 @@
-  // Consolidated tricks data structure
+// Consolidated tricks data structure
 const tricksData = {
   "gazelle": [
     {"name": "Open Gazelle", "completed": false, "frontLink": "https://billyarlew021217.wordpress.com/fog", "backLink": "https://billyarlew021217.wordpress.com/bog"},
@@ -11,7 +11,6 @@ const tricksData = {
 };
 
 const bingoData = {
-    "title": "Wizard Basics Bingo!",
     "legs": {
         "right": {
             "front": tricksData,
@@ -60,6 +59,8 @@ function debounce(func, wait) {
 }
 
 let completedTricksCache = null;
+let hasShownCompletionCelebration = false; // Track if we've already celebrated completion
+let hasShownCompletionModal = false; // Track if we've already shown the completion modal
 
 function saveGameState() {
     const completedTricks = Array.from(document.querySelectorAll('.trick.completed'))
@@ -69,6 +70,7 @@ function saveGameState() {
     try {
         localStorage.setItem('billyBingoState', JSON.stringify(completedTricks));
         completedTricksCache = completedTricks;
+        updateProgressBar(); // Update progress bar after saving
     } catch (error) {
         console.warn('Failed to save game state:', error);
     }
@@ -98,6 +100,106 @@ function loadGameState() {
   } catch (error) {
     console.warn('Failed to load game state:', error);
   }
+}
+
+// Progress tracking functionality
+const TOTAL_TRICKS = 16; // 2 legs × 2 positions × 2 categories × 2 tricks each
+
+function calculateProgress() {
+    try {
+        const savedState = localStorage.getItem('billyBingoState');
+        const completedTricks = savedState ? JSON.parse(savedState) : [];
+        const completedCount = completedTricks.length;
+        const progressPercentage = Math.round((completedCount / TOTAL_TRICKS) * 100);
+        
+        return {
+            completedCount,
+            totalCount: TOTAL_TRICKS,
+            percentage: progressPercentage
+        };
+    } catch (error) {
+        console.warn('Failed to calculate progress:', error);
+        return {
+            completedCount: 0,
+            totalCount: TOTAL_TRICKS,
+            percentage: 0
+        };
+    }
+}
+
+function updateProgressBar() {
+    const progress = calculateProgress();
+    const progressBar = document.getElementById('main-progress-bar');
+    const progressText = document.getElementById('progress-text');
+    
+    if (progressBar && progressText) {
+        // Update progress bar
+        progressBar.style.width = `${progress.percentage}%`;
+        progressBar.setAttribute('aria-valuenow', progress.percentage);
+        
+        // Update text
+        progressText.textContent = `${progress.completedCount}/${progress.totalCount}`;
+        
+        // Add completion celebration effect
+        if (progress.percentage === 100) {
+            // progressBar.classList.add('bg-warning');
+            // progressBar.classList.remove('bg-success');
+            // setTimeout(() => {
+            //     progressBar.classList.remove('bg-warning');
+            //     progressBar.classList.add('bg-success');
+            // }, 1000);
+            progressBar.classList.add('bg-success');
+            
+            // Throw confetti celebration! 🎉 (only once per completion)
+            if (!hasShownCompletionCelebration) {
+                throwConfetti();
+                hasShownCompletionCelebration = true;
+            }
+            
+            // Show congratulations modal (only once per completion)
+            if (!hasShownCompletionModal) {
+                showCongratulationsModal();
+                hasShownCompletionModal = true;
+            }
+        } else {
+            // Reset celebration flag when progress drops below 100%
+            progressBar.classList.remove('bg-success');
+            progressBar.classList.add('bg-primary');
+            hasShownCompletionCelebration = false;
+            hasShownCompletionModal = false;
+        }
+    }
+}
+
+// Confetti celebration function
+function throwConfetti() {
+    // Create confetti container
+    const confettiContainer = document.createElement('div');
+    confettiContainer.className = 'confetti';
+    document.body.appendChild(confettiContainer);
+    
+    // Create confetti pieces
+    for (let i = 0; i < 18; i++) {
+        const confettiPiece = document.createElement('div');
+        confettiPiece.className = 'confetti-piece';
+        confettiContainer.appendChild(confettiPiece);
+    }
+    
+    // Remove confetti after animation completes
+    setTimeout(() => {
+        if (confettiContainer && confettiContainer.parentNode) {
+            confettiContainer.parentNode.removeChild(confettiContainer);
+        }
+    }, 4000);
+}
+
+// Show congratulations modal
+function showCongratulationsModal() {
+    // Small delay to let confetti start first
+    setTimeout(() => {
+        const modal = new bootstrap.Modal(document.getElementById('congratulationsModal'));
+        modal.show();
+    }, 500);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -138,12 +240,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  document.querySelector('.app-header').textContent = bingoData.title;
+  // Update choose-side button selection state
+  function updateChooseSideButtons() {
+    const hash = window.location.hash.substring(1);
+    const chooseSideButtons = document.querySelectorAll('.choose-side');
+    
+    // Remove selected class from all buttons
+    chooseSideButtons.forEach(button => {
+      button.classList.remove('selected');
+    });
+    
+    // Add selected class to the matching button
+    if (hash === 'right' || hash === 'left') {
+      const matchingButton = document.querySelector(`.choose-side[data-side="${hash}"]`);
+      if (matchingButton) {
+        matchingButton.classList.add('selected');
+      }
+    }
+  }
 
   function updateSlidePosition() {
     const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;
     swipeContainer.style.transform = x;
     updateUrl(); // Update URL when slide changes
+    updateChooseSideButtons(); // Update button selection state
   }
 
   // Expose functions globally for jQuery event handlers
@@ -168,74 +288,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;
       swipeContainer.style.transform = x;
     }
+    updateChooseSideButtons(); // Update button selection state on hash change
   });
 
   // Initialize slide position from URL
   initializeFromUrl();
 
-  // Optimized Touch Swipe Functionality
-  let touchstartX = 0;
-  let touchstartY = 0;
-  let touchendX = 0;
-  let touchendY = 0;
-  let isSwipeGesture = false;
-  const swipeThreshold = 30; // Reduced threshold for faster response
-  const verticalThreshold = 100; // Prevent accidental horizontal swipes during scroll
-
-  swipeContainer.addEventListener('touchstart', function(event) {
-      touchstartX = event.changedTouches[0].clientX;
-      touchstartY = event.changedTouches[0].clientY;
-      isSwipeGesture = false;
-  }, { passive: true });
-
-  swipeContainer.addEventListener('touchmove', function(event) {
-      if (isSwipeGesture) return;
-      
-      const touchX = event.changedTouches[0].clientX;
-      const touchY = event.changedTouches[0].clientY;
-      const deltaX = Math.abs(touchX - touchstartX);
-      const deltaY = Math.abs(touchY - touchstartY);
-      
-      // If horizontal movement is greater than vertical, it's likely a swipe
-      if (deltaX > deltaY && deltaX > 10) {
-          isSwipeGesture = true;
-          // Prevent scrolling during horizontal swipe
-          event.preventDefault();
-      }
-  }, { passive: false }); // Need to prevent default for horizontal swipes
-
-  swipeContainer.addEventListener('touchend', function(event) {
-      if (!isSwipeGesture) return;
-      
-      touchendX = event.changedTouches[0].clientX;
-      touchendY = event.changedTouches[0].clientY;
-      handleSwipe();
-  }, { passive: true });
-
-  function handleSwipe() {
-      const swipeDistance = touchendX - touchstartX;
-      const verticalDistance = Math.abs(touchendY - touchstartY);
-      
-      // Ignore swipes that are too vertical
-      if (verticalDistance > verticalThreshold) return;
-      
-      if (swipeDistance < -swipeThreshold && currentSlide < totalSlides - 1) {
-          currentSlide++;
-          updateSlidePosition();
-      } else if (swipeDistance > swipeThreshold && currentSlide > 0) {
-          currentSlide--;
-          updateSlidePosition();
-      }
-      
-      // Reset touch coordinates and gesture flag
-      touchstartX = 0;
-      touchendX = 0;
-      touchstartY = 0;
-      touchendY = 0;
-      isSwipeGesture = false;
-  }
-
   updateSlidePosition();
+  
+  // Initialize choose-side button states
+  updateChooseSideButtons();
 
   // Initialize lazy loading for demo links with Intersection Observer
   if ('IntersectionObserver' in window) {
@@ -261,6 +323,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Load saved state from localStorage
   loadGameState();
+  
+  // Initialize progress bar
+  updateProgressBar();
 
   // jQuery event delegation for better performance (wait for jQuery to be available)
   if (typeof $ !== 'undefined') {
@@ -281,7 +346,9 @@ function setupJQueryEvents() {
   $(document).ready(function() {
     $(document).on('click', '.trick', function() {
       $(this).toggleClass('completed');
-      debouncedSave();
+      // Update progress bar immediately for better user experience
+      setTimeout(updateProgressBar, 10);
+      debouncedSave(); // This will now also update the progress bar
     });
     
     $(document).on('click', '.choose-side', function(e) {
