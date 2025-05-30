@@ -45,9 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const totalSlides = slides.length;
 
   function updateSlidePosition() {
-    const x = `translateX(-${currentSlide * 100}%)`;
+    const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;  // use 3d for better Safari compatibility
     swipeContainer.style.transform       = x;
-    swipeContainer.style.WebkitTransform = x;    // ← use capital “W”
+    swipeContainer.style.webkitTransform = x;    // correct vendor prefix
+    console.log(x)
   }
 
   // Basic Touch Swipe Functionality
@@ -91,4 +92,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   updateSlidePosition();
+
+  // wire up click events on each trick to toggle completed state
+  const trickElements = document.querySelectorAll('.trick');
+  trickElements.forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('completed');
+    });
+  });
 });
