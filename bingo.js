@@ -36,60 +36,58 @@ function generateTricksHTML(tricksArray, className = '') {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const swipeContainer = document.querySelector('.swipe-container');
-    if (swipeContainer) {
-        const slides = swipeContainer.querySelectorAll('.swipe-slide');
-        let currentSlide = 0;
-        const totalSlides = slides.length;
+  const swipeContainer = document.querySelector('.swipe-container');
+  if (!swipeContainer) return;
 
-        function updateSlidePosition() {
-            const x = `translateX(-${currentSlide * 100}%)`;
-            swipeContainer.style.transform = x;
-            swipeContainer.style.webkitTransform = x;    // ← add WebKit prefix
-        }
+  const slides = swipeContainer.querySelectorAll('.swipe-slide');
+  let currentSlide = 0;
+  const totalSlides = slides.length;
 
-        // Basic Touch Swipe Functionality
-        let touchstartX = 0;
-        let touchendX = 0;
-        const swipeThreshold = 50; // Minimum pixels for a swipe
+  function updateSlidePosition() {
+    const x = `translateX(-${currentSlide * 100}%)`;
+    swipeContainer.style.transform       = x;
+    swipeContainer.style.WebkitTransform = x;    // ← use capital “W”
+  }
 
-        swipeContainer.addEventListener('touchstart', function(event) {
-            touchstartX = event.changedTouches[0].screenX;
-        }, { passive: true }); // Use passive for better scroll performance
+  // Basic Touch Swipe Functionality
+  let touchstartX = 0;
+  let touchendX = 0;
+  const swipeThreshold = 50; // Minimum pixels for a swipe
 
-        swipeContainer.addEventListener('touchend', function(event) {
-            touchendX = event.changedTouches[0].screenX;
-            handleSwipe();
-        }, false);
+  swipeContainer.addEventListener('touchstart', function(event) {
+      touchstartX = event.changedTouches[0].screenX;
+  }, { passive: true }); // Use passive for better scroll performance
 
-        function handleSwipe() {
-            if (touchendX < touchstartX - swipeThreshold) { // Swiped left
-                if (currentSlide < totalSlides - 1) {
-                    currentSlide++;
-                    updateSlidePosition();
-                }
-            } else if (touchendX > touchstartX + swipeThreshold) { // Swiped right
-                if (currentSlide > 0) {
-                    currentSlide--;
-                    updateSlidePosition();
-                }
-            }
-        }
-        
-        // wire up “choose-side” links
-        // use Array.prototype.forEach.call so it works on older Safari
-        const sideLinks = document.querySelectorAll('.choose-side');
-        Array.prototype.forEach.call(sideLinks, link => {
-            link.addEventListener('click', e => {
-            e.preventDefault();
-            // if your HTML uses data-side="right"/"left":
-            const slide = e.currentTarget.dataset.slide;
-            // (or if you prefer data-slide, read dataset.slide instead)
-            currentSlide = (slide === 'right') ? 1 : 2;
-            updateSlidePosition();
-            });
-        });
+  swipeContainer.addEventListener('touchend', function(event) {
+      touchendX = event.changedTouches[0].screenX;
+      handleSwipe();
+  }, false);
 
-        updateSlidePosition();
-    }
+  function handleSwipe() {
+      if (touchendX < touchstartX - swipeThreshold) { // Swiped left
+          if (currentSlide < totalSlides - 1) {
+              currentSlide++;
+              updateSlidePosition();
+          }
+      } else if (touchendX > touchstartX + swipeThreshold) { // Swiped right
+          if (currentSlide > 0) {
+              currentSlide--;
+              updateSlidePosition();
+          }
+      }
+  }
+  
+  // wire up “choose-side” links
+  const sideLinks = document.querySelectorAll('.choose-side');
+  Array.prototype.forEach.call(sideLinks, link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      // read data-side, not dataset.slide
+      const side = e.currentTarget.dataset.side;
+      currentSlide = (side === 'right') ? 1 : 2;
+      updateSlidePosition();
+    });
+  });
+
+  updateSlidePosition();
 });
