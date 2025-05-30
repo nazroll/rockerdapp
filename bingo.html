@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billy's Wizard Bingo!</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./bingo.css" rel="stylesheet">
+    <script type="text/javascript" src="./bingo.js"></script>
+</head>
+<body>
+    <div class="container bingo">
+        <div id="header">
+            <h1><a href="#">Billy's Wizard Bingo!</a></h1>
+        </div>
+        
+        <div class="swipe-wrapper">
+            <div class="row swipe-container">
+                <!-- Choose your side: right or left? -->
+                <div class="col-12 choose-your-side swipe-slide">
+                    <p>Choose your side: 
+                        <a href="#" class="choose-side" data-slide="right">right</a> or 
+                        <a href="#" class="choose-side" data-slide="left">left</a></p>
+                </div>
+
+                <!-- Right -->
+                <div class="col-12 right-leg swipe-slide">
+                    <h2>Right</h2>
+                    <!-- Front, Right -->
+                    <div class="col-sm-12 front-right-leg">
+                        <div class="row">
+                            
+                            <div class="col-10">
+                                <script type="text/javascript">
+                                    const frontRightGazelleTricks = bingoData.legs.right.front.gazelle;
+                                    document.write(generateTricksHTML(frontRightGazelleTricks, 'top'));
+                                
+                                    const frontRightLionTricks = bingoData.legs.right.front.lion;
+                                    document.write(generateTricksHTML(frontRightLionTricks, 'bottom'));
+                                </script>
+                            </div>
+                            <div class="col-2">
+                                <h3>Front</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Back, Right -->
+                    <div class="col-sm-12 back-right-leg">
+                        <div class="row">
+                            
+                            <div class="col-10">
+                                <script type="text/javascript">
+                                    const backRightGazelleTricks = bingoData.legs.right.back.gazelle;
+                                    document.write(generateTricksHTML(backRightGazelleTricks, 'top'));
+
+                                    const backRightLionTricks = bingoData.legs.right.back.lion;
+                                    document.write(generateTricksHTML(backRightLionTricks, 'bottom'));
+                                </script>
+                            </div>
+                            <div class="col-2">
+                                <h3>Back</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Left -->
+                <div class="col-12 left-leg swipe-slide">
+                    <h2>Left</h2>
+                    <!-- Front, Left -->
+                    <div class="col-sm-12 front-left-leg">
+                        <div class="row">
+                            <div class="col-2">
+                                <h3>Front</h3>
+                            </div>
+                            <div class="col-10">
+                                <script type="text/javascript">
+                                    const frontLeftGazelleTricks = bingoData.legs.left.front.gazelle;
+                                    document.write(generateTricksHTML(frontLeftGazelleTricks, 'top'));
+                                
+                                    const frontLeftLionTricks = bingoData.legs.left.front.lion;
+                                    document.write(generateTricksHTML(frontLeftLionTricks, 'bottom'));
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Back, Right -->
+                    <div class="col-sm-12 back-left-leg">
+                        <div class="row">
+                            <div class="col-2">
+                                <h3>Back</h3>
+                            </div>
+                            <div class="col-10">
+                                <script type="text/javascript">
+                                    const backLeftGazelleTricks = bingoData.legs.left.back.gazelle;
+                                    document.write(generateTricksHTML(backLeftGazelleTricks, 'top'));
+
+                                    const backLeftLionTricks = bingoData.legs.left.back.lion;
+                                    document.write(generateTricksHTML(backLeftLionTricks, 'bottom'));
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+
+    </div>
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+.bingo {
+    max-width: 480px;
+}
+#header {
+    border-bottom: solid 1px #ccc;
+    padding: 12px 0 12px 0;
+}
+#footer {
+    min-height: 24px;
+}
+.box {
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4px;
+}
+
+.right-leg h2, .left-leg h2{
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+.right-leg .col-10{
+    padding-right: 0;
+    padding-left: 0;
+}
+.left-leg .col-10 {
+    padding-left: 0;
+    padding-right: 0;
+}
+.right-leg h2 {
+    text-align: right;
+}
+.front-right-leg, .back-right-leg, 
+.front-left-leg, .back-left-leg {
+    margin: 12px 0;
+}
+
+.front-right-leg h3, .back-right-leg h3, 
+.front-left-leg h3, .back-left-leg h3 {
+    transform: rotate(-0.25turn);
+    position: relative;
+    top: 42%;
+}
+.front-right-leg .row .col-2, .back-right-leg .row .col-2, 
+.front-left-leg .row .col-2, .back-left-leg .row .col-2 {
+    margin: 0;
+    padding: 0;
+    background-color: #eee;
+}
+.tricks, .trick {
+    margin: 0px;
+    padding: 0;
+}
+.tricks {
+    margin: 0;
+}
+.tricks.top {
+    margin-bottom: 12px;
+}
+/* Ensure boxes in a row don't wrap unnecessarily on small screens if not desired */
+.trick {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.choose-your-side {
+    padding-top: 12px;
+}
+
+/* Swipe Functionality Styles */
+.swipe-wrapper {
+    overflow: hidden;
+    width: 100%; /* Adjust if .bingo container width is different or not set */
+    position: relative;
+}
+
+.swipe-container {
+    display: flex;
+    flex-wrap: nowrap; /* Important to keep slides in one line */
+    transition: transform 0.3s ease-in-out;
+}
+
+.swipe-slide {
+    min-width: 100%; /* Each slide takes full width of the wrapper */
+    flex-shrink: 0; /* Prevent slides from shrinking */
+    box-sizing: border-box;
+}
+/* End Swipe Functionality Styles */
