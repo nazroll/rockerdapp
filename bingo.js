@@ -48,7 +48,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;  // use 3d for better Safari compatibility
     swipeContainer.style.transform       = x;
     swipeContainer.style.webkitTransform = x;    // correct vendor prefix
-    console.log(x)
+    
+    // Force browser to acknowledge the transform change
+    swipeContainer.offsetHeight;
+    
+    console.log(`Updated to slide ${currentSlide}: ${x}`)
   }
 
   // Basic Touch Swipe Functionality
@@ -58,25 +62,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
   swipeContainer.addEventListener('touchstart', function(event) {
       touchstartX = event.changedTouches[0].screenX;
+      console.log(`Touch start: ${touchstartX}`);
   }, { passive: true }); // Use passive for better scroll performance
 
   swipeContainer.addEventListener('touchend', function(event) {
       touchendX = event.changedTouches[0].screenX;
+      console.log(`Touch end: ${touchendX}`);
       handleSwipe();
   }, false);
 
   function handleSwipe() {
+      const swipeDistance = touchendX - touchstartX;
+      console.log(`Swipe: start=${touchstartX}, end=${touchendX}, distance=${swipeDistance}, currentSlide=${currentSlide}, totalSlides=${totalSlides}`);
+      
       if (touchendX < touchstartX - swipeThreshold) { // Swiped left
           if (currentSlide < totalSlides - 1) {
               currentSlide++;
+              console.log(`Swiping left to slide ${currentSlide}`);
               updateSlidePosition();
+          } else {
+              console.log(`Cannot swipe left: already at last slide (${currentSlide})`);
           }
       } else if (touchendX > touchstartX + swipeThreshold) { // Swiped right
           if (currentSlide > 0) {
               currentSlide--;
+              console.log(`Swiping right to slide ${currentSlide}`);
               updateSlidePosition();
+          } else {
+              console.log(`Cannot swipe right: already at first slide (${currentSlide})`);
           }
+      } else {
+          console.log(`Swipe distance ${swipeDistance} below threshold ${swipeThreshold}`);
       }
+      
+      // Reset touch coordinates
+      touchstartX = 0;
+      touchendX = 0;
   }
   
   // wire up “choose-side” links
