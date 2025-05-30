@@ -84,8 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
     link.addEventListener('click', e => {
       e.preventDefault();
       // read data-side, not dataset.slide
-      const side = e.currentTarget.dataset.slide;
-      currentSlide = (slide === 'right') ? 1 : 2;
+      const side = e.currentTarget.dataset.side;
+      currentSlide = (side === 'right') ? 1 : 2;
       updateSlidePosition();
     });
   });
