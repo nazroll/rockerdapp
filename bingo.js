@@ -1,47 +1,25 @@
-  const tricksData = {
-    "gazelle": [
-        {"name": "Open Gazelle", "completed": false},
-        {"name": "Closed Gazelle", "completed": false},
-        
-    ],
-    "lion": [
-        {"name": "Open Lion", "completed": false},
-        {"name": "Closed Lion", "completed": false}
-    ]
-}
-
-const frontTricksData = {
+  // Consolidated tricks data structure
+const tricksData = {
   "gazelle": [
-      {"name": "Open Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/fog"},
-      {"name": "Closed Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/fcg"},
+    {"name": "Open Gazelle", "completed": false, "frontLink": "https://billyarlew021217.wordpress.com/fog", "backLink": "https://billyarlew021217.wordpress.com/bog"},
+    {"name": "Closed Gazelle", "completed": false, "frontLink": "https://billyarlew021217.wordpress.com/fcg", "backLink": "https://billyarlew021217.wordpress.com/bcg"}
   ],
   "lion": [
-      {"name": "Open Lion", "completed": false, "link" : "https://billyarlew021217.wordpress.com/fol"},
-      {"name": "Closed Lion", "completed": false, "link" : "https://eccentricinline.com/fcl/"}
+    {"name": "Open Lion", "completed": false, "frontLink": "https://billyarlew021217.wordpress.com/fol", "backLink": "https://billyarlew021217.wordpress.com/bol"},
+    {"name": "Closed Lion", "completed": false, "frontLink": "https://eccentricinline.com/fcl/", "backLink": "https://billyarlew021217.wordpress.com/bcl"}
   ]
-}
-
-const backTricksData = {
-  "gazelle": [
-      {"name": "Open Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bog"},
-      {"name": "Closed Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bcg"},
-  ],
-  "lion": [
-      {"name": "Open Lion", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bol"},
-      {"name": "Closed Lion", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bcl"}
-  ]
-}
+};
 
 const bingoData = {
-    "title": "Billy's Wizard Basics Bingo!",
+    "title": "Wizard Basics Bingo!",
     "legs": {
         "right": {
-            "front": frontTricksData,
-            "back": backTricksData
+            "front": tricksData,
+            "back": tricksData
         },
         "left": {
-            "front": frontTricksData,
-            "back": backTricksData
+            "front": tricksData,
+            "back": tricksData
         }
     }
 };
@@ -91,7 +69,6 @@ function saveGameState() {
     try {
         localStorage.setItem('billyBingoState', JSON.stringify(completedTricks));
         completedTricksCache = completedTricks;
-        console.log('Game state saved:', completedTricks);
     } catch (error) {
         console.warn('Failed to save game state:', error);
     }
@@ -106,7 +83,6 @@ function loadGameState() {
     const savedState = localStorage.getItem('billyBingoState');
     if (savedState) {
       const completedTricks = JSON.parse(savedState);
-      console.log('Loading game state:', completedTricks);
       completedTricksCache = completedTricks;
       
       // Use requestAnimationFrame for better performance
@@ -145,11 +121,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('.app-header').textContent = bingoData.title;
 
   function updateSlidePosition() {
-    console.log('updateSlidePosition called, currentSlide:', currentSlide);
-    const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;  // use 3d for better Safari compatibility
-    console.log('Transform value:', x);
+    const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;
     swipeContainer.style.transform = x;
-    swipeContainer.style.webkitTransform = x;    // correct vendor prefix
+    swipeContainer.style.webkitTransform = x;
     
     // Add loading state for better UX
     swipeContainer.classList.add('transitioning');
@@ -168,50 +142,33 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   window.goToSide = function(side) {
-    console.log('goToSide called with:', side);
     currentSlide = (side === 'right') ? 1 : 2;
-    console.log('Setting currentSlide to:', currentSlide);
     updateSlidePosition();
   };
 
-  // Basic Touch Swipe Functionality
+  // Optimized Touch Swipe Functionality
   let touchstartX = 0;
   let touchendX = 0;
-  const swipeThreshold = 50; // Minimum pixels for a swipe
+  const swipeThreshold = 50;
 
   swipeContainer.addEventListener('touchstart', function(event) {
       touchstartX = event.changedTouches[0].screenX;
-      console.log(`Touch start: ${touchstartX}`);
-  }, { passive: true }); // Use passive for better scroll performance
+  }, { passive: true });
 
   swipeContainer.addEventListener('touchend', function(event) {
       touchendX = event.changedTouches[0].screenX;
-      console.log(`Touch end: ${touchendX}`);
       handleSwipe();
-  }, false);
+  }, { passive: true });
 
   function handleSwipe() {
       const swipeDistance = touchendX - touchstartX;
-      console.log(`Swipe: start=${touchstartX}, end=${touchendX}, distance=${swipeDistance}, currentSlide=${currentSlide}, totalSlides=${totalSlides}`);
       
-      if (touchendX < touchstartX - swipeThreshold) { // Swiped left
-          if (currentSlide < totalSlides - 1) {
-              currentSlide++;
-              console.log(`Swiping left to slide ${currentSlide}`);
-              updateSlidePosition();
-          } else {
-              console.log(`Cannot swipe left: already at last slide (${currentSlide})`);
-          }
-      } else if (touchendX > touchstartX + swipeThreshold) { // Swiped right
-          if (currentSlide > 0) {
-              currentSlide--;
-              console.log(`Swiping right to slide ${currentSlide}`);
-              updateSlidePosition();
-          } else {
-              console.log(`Cannot swipe right: already at first slide (${currentSlide})`);
-          }
-      } else {
-          console.log(`Swipe distance ${swipeDistance} below threshold ${swipeThreshold}`);
+      if (touchendX < touchstartX - swipeThreshold && currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlidePosition();
+      } else if (touchendX > touchstartX + swipeThreshold && currentSlide > 0) {
+          currentSlide--;
+          updateSlidePosition();
       }
       
       // Reset touch coordinates
@@ -221,26 +178,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
   updateSlidePosition();
 
+  // Initialize lazy loading for demo links with Intersection Observer
+  if ('IntersectionObserver' in window) {
+    const observeDemo = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('loaded');
+          observeDemo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    // Observe all demo links containers
+    document.querySelectorAll('.demo-links').forEach(el => {
+      observeDemo.observe(el);
+    });
+  } else {
+    // Fallback for older browsers
+    document.querySelectorAll('.demo-links').forEach(el => {
+      el.classList.add('loaded');
+    });
+  }
+
   // Load saved state from localStorage
   loadGameState();
 
   // jQuery event delegation for better performance (wait for jQuery to be available)
+  if (typeof $ !== 'undefined') {
+    setupJQueryEvents();
+  } else {
+    // Fallback: wait for jQuery to load
+    const checkJQuery = setInterval(() => {
+      if (typeof $ !== 'undefined') {
+        clearInterval(checkJQuery);
+        setupJQueryEvents();
+      }
+    }, 100);
+  }
+});
+
+// Separate function for jQuery event setup to avoid code duplication
+function setupJQueryEvents() {
   $(document).ready(function() {
     $(document).on('click', '.trick', function() {
       $(this).toggleClass('completed');
-      debouncedSave(); // Use debounced save
+      debouncedSave();
     });
     
     $(document).on('click', '.choose-side', function(e) {
       e.preventDefault();
       const side = $(this).data('side');
-      console.log('Choose side clicked:', side);
-      console.log('goToSide function exists:', typeof window.goToSide);
       if (window.goToSide) {
         window.goToSide(side);
-        console.log('Called goToSide with:', side);
-      } else {
-        console.error('goToSide function not found');
       }
     });
     
@@ -251,4 +240,4 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-});
+}

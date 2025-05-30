@@ -1,13 +1,21 @@
+/* Modern CSS Performance Optimizations */
 .bingo {
     max-width: 480px;
+    min-width: 420px;
+    contain: layout style paint; /* Optimize repaints */
 }
+
 #header {
-    border-bottom: solid 1px #ccc;
+    border-bottom: solid 1px #eee;
     padding: 16px 0 6px 0;
+    contain: layout style;
 }
+
 #header h1 {
     font-size: 2em;
+    margin: 0; /* Reset browser default margins */
 }
+
 #footer {
     text-align: center;
     font-size: 0.65em;
@@ -15,7 +23,9 @@
     text-transform: uppercase;
     color: #666;
     margin-top: 12px;
+    contain: layout style;
 }
+/* Optimized Box Component */
 .box {
     border: 1px solid #ced4da;
     background-color: #f8f9fa;
@@ -25,9 +35,15 @@
     justify-content: center;
     text-align: center;
     padding: 4px;
+    will-change: background-color, border-color; /* Hint for animations */
+    transition: all 0.2s ease; /* Smooth transitions */
+    font-size: 0.9em; /* Slightly smaller for better fit */
 }
+
+/* Performance-optimized states */
 .right-leg, .left-leg, .choose-your-side {
     display: block;
+    contain: layout style;
 }
 .right-leg h2, .left-leg h2{
     padding-top: 12px;
@@ -69,34 +85,65 @@
 .tricks.top {
     margin-bottom: 12px;
 }
-/* Ensure boxes in a row don't wrap unnecessarily on small screens if not desired */
+/* Enhanced Trick Interactions */
 .trick {
     padding-left: 5px;
     padding-right: 5px;
-    cursor: pointer;  /* added to make trick clickable */
+    cursor: pointer;
+    contain: layout style paint;
+    transition: transform 0.1s ease; /* Micro-interaction feedback */
+    -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
 }
 
-/* Style to indicate a completed trick */
+.trick:hover {
+    transform: translateY(-1px); /* Subtle hover effect */
+}
+
+.trick:active {
+    transform: translateY(0px); /* Press feedback */
+}
+
+/* Enhanced completed state */
 .trick.completed .box {
-    background-color: #16a538;
+    background-color: #28a745; /* Bootstrap success green */
     border-color: #c3e6cb;
     color: #fff;
     font-weight: bold;
+    transform: scale(1.02); /* Subtle scale effect */
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3); /* Soft glow */
 }
 
-.choose-your-side {
-    padding-top: 12px;
+/* Improved focus states for accessibility */
+.trick:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    border-radius: 4px;
 }
-.choose-your-side p {
-    text-align: center;
-    margin-top: 24px;
-    padding-bottom: 48px;
-}
+
+/* Better button styling */
 .choose-side {
     padding: 12px 24px;
     margin-left: 12px;
     margin-right: 12px;
     background-color: #eee;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.choose-side:hover {
+    background-color: #007bff;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    text-decoration: none;
+}
+
+.choose-side:focus {
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
 }
 
 /* Swipe Functionality Styles */
@@ -192,4 +239,69 @@ img {
 /* Prevent layout shifts */
 .swipe-slide {
     min-height: 400px;
+}
+
+/* Visual Guides Styling */
+.visual-guides {
+    padding-top: 20px;
+    margin-top: 16px;
+    border-top: 1px solid #eee;
+    contain: layout style;
+}
+
+.visual-guides h3 {
+    text-transform: uppercase;
+    font-size: 1.1em;
+    margin-bottom: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+.visual-guides h4 {
+    font-size: 1em;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+.visual-guides ul {
+    margin-bottom: 16px;
+    padding-left: 20px;
+}
+
+.visual-guides li {
+    margin-bottom: 4px;
+}
+
+.visual-guides a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+}
+
+.visual-guides a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Choose your side section */
+.choose-your-side {
+    padding-top: 12px;
+    text-align: center;
+}
+
+.choose-your-side p {
+    text-align: center;
+    margin-top: 24px;
+    padding-bottom: 48px;
+    font-size: 1.1em;
+}
+
+.choose-your-side img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
