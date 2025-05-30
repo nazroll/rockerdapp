@@ -43,9 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalSlides = slides.length;
 
         function updateSlidePosition() {
-            if (swipeContainer && slides.length > 0) {
-                swipeContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
-            }
+            const x = `translateX(-${currentSlide * 100}%)`;
+            swipeContainer.style.transform = x;
+            swipeContainer.style.webkitTransform = x;    // ← add WebKit prefix
         }
 
         // Basic Touch Swipe Functionality
@@ -77,19 +77,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // wire up “choose-side” links
-        document.querySelectorAll('.choose-side').forEach(link => {
+        // use Array.prototype.forEach.call so it works on older Safari
+        const sideLinks = document.querySelectorAll('.choose-side');
+        Array.prototype.forEach.call(sideLinks, link => {
             link.addEventListener('click', e => {
             e.preventDefault();
-            // slide 0 = choose-your-side, 1 = right-leg, 2 = left-leg
-            currentSlide = e.currentTarget.dataset.slide === 'right' ? 1 : 2;
+            // if your HTML uses data-side="right"/"left":
+            const slide = e.currentTarget.dataset.slide;
+            // (or if you prefer data-slide, read dataset.slide instead)
+            currentSlide = (slide === 'right') ? 1 : 2;
             updateSlidePosition();
             });
         });
 
-        // Initial setup
-        if (totalSlides > 0) {
-            updateSlidePosition();
-        }
+        updateSlidePosition();
     }
-    
 });
