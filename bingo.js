@@ -118,27 +118,40 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentSlide = 0;
   const totalSlides = slides.length;
 
+  // URL pagination - map slide numbers to URL fragments
+  const slideUrls = ['home', 'right', 'left'];
+  
+  // Initialize slide from URL hash on page load
+  function initializeFromUrl() {
+    const hash = window.location.hash.substring(1); // Remove the #
+    const slideIndex = slideUrls.indexOf(hash);
+    if (slideIndex !== -1) {
+      currentSlide = slideIndex;
+    }
+  }
+
+  // Update URL when slide changes
+  function updateUrl() {
+    const newHash = slideUrls[currentSlide];
+    if (window.location.hash !== `#${newHash}`) {
+      window.history.replaceState(null, null, `#${newHash}`);
+    }
+  }
+
   document.querySelector('.app-header').textContent = bingoData.title;
 
   function updateSlidePosition() {
     const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;
     swipeContainer.style.transform = x;
-    swipeContainer.style.webkitTransform = x;
-    
-    // Add loading state for better UX
-    swipeContainer.classList.add('transitioning');
-    setTimeout(() => {
-      swipeContainer.classList.remove('transitioning');
-    }, 300);
-    
-    // Force browser to acknowledge the transform change
-    swipeContainer.offsetHeight;
+    updateUrl(); // Update URL when slide changes
   }
 
   // Expose functions globally for jQuery event handlers
   window.goToSlide = function(slideNumber) {
-    currentSlide = slideNumber;
-    updateSlidePosition();
+    if (slideNumber >= 0 && slideNumber < totalSlides) {
+      currentSlide = slideNumber;
+      updateSlidePosition();
+    }
   };
 
   window.goToSide = function(side) {
@@ -146,34 +159,80 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSlidePosition();
   };
 
+  // Handle browser back/forward buttons
+  window.addEventListener('hashchange', function() {
+    const hash = window.location.hash.substring(1);
+    const slideIndex = slideUrls.indexOf(hash);
+    if (slideIndex !== -1 && slideIndex !== currentSlide) {
+      currentSlide = slideIndex;
+      const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;
+      swipeContainer.style.transform = x;
+    }
+  });
+
+  // Initialize slide position from URL
+  initializeFromUrl();
+
   // Optimized Touch Swipe Functionality
   let touchstartX = 0;
+  let touchstartY = 0;
   let touchendX = 0;
-  const swipeThreshold = 50;
+  let touchendY = 0;
+  let isSwipeGesture = false;
+  const swipeThreshold = 30; // Reduced threshold for faster response
+  const verticalThreshold = 100; // Prevent accidental horizontal swipes during scroll
 
   swipeContainer.addEventListener('touchstart', function(event) {
-      touchstartX = event.changedTouches[0].screenX;
+      touchstartX = event.changedTouches[0].clientX;
+      touchstartY = event.changedTouches[0].clientY;
+      isSwipeGesture = false;
   }, { passive: true });
 
+  swipeContainer.addEventListener('touchmove', function(event) {
+      if (isSwipeGesture) return;
+      
+      const touchX = event.changedTouches[0].clientX;
+      const touchY = event.changedTouches[0].clientY;
+      const deltaX = Math.abs(touchX - touchstartX);
+      const deltaY = Math.abs(touchY - touchstartY);
+      
+      // If horizontal movement is greater than vertical, it's likely a swipe
+      if (deltaX > deltaY && deltaX > 10) {
+          isSwipeGesture = true;
+          // Prevent scrolling during horizontal swipe
+          event.preventDefault();
+      }
+  }, { passive: false }); // Need to prevent default for horizontal swipes
+
   swipeContainer.addEventListener('touchend', function(event) {
-      touchendX = event.changedTouches[0].screenX;
+      if (!isSwipeGesture) return;
+      
+      touchendX = event.changedTouches[0].clientX;
+      touchendY = event.changedTouches[0].clientY;
       handleSwipe();
   }, { passive: true });
 
   function handleSwipe() {
       const swipeDistance = touchendX - touchstartX;
+      const verticalDistance = Math.abs(touchendY - touchstartY);
       
-      if (touchendX < touchstartX - swipeThreshold && currentSlide < totalSlides - 1) {
+      // Ignore swipes that are too vertical
+      if (verticalDistance > verticalThreshold) return;
+      
+      if (swipeDistance < -swipeThreshold && currentSlide < totalSlides - 1) {
           currentSlide++;
           updateSlidePosition();
-      } else if (touchendX > touchstartX + swipeThreshold && currentSlide > 0) {
+      } else if (swipeDistance > swipeThreshold && currentSlide > 0) {
           currentSlide--;
           updateSlidePosition();
       }
       
-      // Reset touch coordinates
+      // Reset touch coordinates and gesture flag
       touchstartX = 0;
       touchendX = 0;
+      touchstartY = 0;
+      touchendY = 0;
+      isSwipeGesture = false;
   }
 
   updateSlidePosition();
