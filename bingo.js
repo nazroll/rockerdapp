@@ -38,6 +38,35 @@ function generateTricksHTML(tricksArray, className = '', legType = '', position 
     return htmlOutput;
 }
 
+// Save game state to localStorage
+function saveGameState() {
+  const completedTricks = [];
+  document.querySelectorAll('.trick.completed').forEach(el => {
+    const trickId = el.dataset.trickId;
+    if (trickId) {
+      completedTricks.push(trickId);
+    }
+  });
+  localStorage.setItem('billyBingoState', JSON.stringify(completedTricks));
+  console.log('Game state saved:', completedTricks);
+}
+
+// Load game state from localStorage
+function loadGameState() {
+  const savedState = localStorage.getItem('billyBingoState');
+  if (savedState) {
+    const completedTricks = JSON.parse(savedState);
+    console.log('Loading game state:', completedTricks);
+    
+    completedTricks.forEach(trickId => {
+      const trickElement = document.querySelector(`[data-trick-id="${trickId}"]`);
+      if (trickElement) {
+        trickElement.classList.add('completed');
+      }
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const swipeContainer = document.querySelector('.swipe-container');
   if (!swipeContainer) return;
@@ -114,6 +143,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  const appLink = document.querySelector('.app-header');
+  if (appLink) {
+    appLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      currentSlide = 0;
+      updateSlidePosition();
+    });
+  }
+
   updateSlidePosition();
 
   // Load saved state from localStorage
@@ -128,32 +166,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
-
-// Save game state to localStorage
-function saveGameState() {
-  const completedTricks = [];
-  document.querySelectorAll('.trick.completed').forEach(el => {
-    const trickId = el.dataset.trickId;
-    if (trickId) {
-      completedTricks.push(trickId);
-    }
-  });
-  localStorage.setItem('billyBingoState', JSON.stringify(completedTricks));
-  console.log('Game state saved:', completedTricks);
-}
-
-// Load game state from localStorage
-function loadGameState() {
-  const savedState = localStorage.getItem('billyBingoState');
-  if (savedState) {
-    const completedTricks = JSON.parse(savedState);
-    console.log('Loading game state:', completedTricks);
-    
-    completedTricks.forEach(trickId => {
-      const trickElement = document.querySelector(`[data-trick-id="${trickId}"]`);
-      if (trickElement) {
-        trickElement.classList.add('completed');
-      }
-    });
-  }
-}

@@ -3,13 +3,17 @@
 }
 #header {
     border-bottom: solid 1px #ccc;
-    padding: 12px 0 12px 0;
+    padding: 16px 0 6px 0;
+}
+#header h1 {
+    font-size: 2em;
 }
 #footer {
     text-align: center;
-    font-size: 0.7em;
+    font-size: 0.65em;
+    line-height: 2em;
     text-transform: uppercase;
-    color: #ccc;
+    color: #666;
     margin-top: 12px;
 }
 .box {
@@ -88,11 +92,7 @@
 .choose-your-side p {
     text-align: center;
     margin-top: 24px;
-    position: absolute;
-    top: 540px;
-    left: 36px;
-    background-color: #fff;
-    padding: 24px;
+    padding-bottom: 48px;
 }
 .choose-side {
     padding: 12px 24px;
