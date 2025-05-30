@@ -41,9 +41,7 @@
     padding-left: 0;
     padding-right: 0;
 }
-.right-leg h2 {
-    text-align: right;
-}
+
 .front-right-leg, .back-right-leg, 
 .front-left-leg, .back-left-leg {
     margin: 12px 0;
@@ -111,10 +109,9 @@
 .swipe-container {
     display: flex;
     flex-wrap: nowrap; /* Important to keep slides in one line */
-    -webkit-transition: -webkit-transform 0.3s ease-in-out;  /* WebKit-prefixed transition */
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-out; /* Simplified transition */
     will-change: transform;  /* hint for smoother animations */
-    -webkit-transform-style: preserve-3d;  /* improve 3d transform rendering */
+    transform: translateZ(0); /* Force hardware acceleration */
     transform-style: preserve-3d;
 }
 
@@ -123,4 +120,76 @@
     flex-shrink: 0; /* Prevent slides from shrinking */
     box-sizing: border-box;
 }
+
+/* Add smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Optimize trick animations */
+.trick {
+    transition: background-color 0.2s ease;
+}
+
+/* Style to indicate a completed trick with smoother transition */
+.trick.completed .box {
+    background-color: #28a745; /* Use Bootstrap success color */
+    border-color: #c3e6cb;
+    color: #fff;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+/* Loading state for transitions */
+.swipe-container.transitioning {
+    pointer-events: none;
+}
 /* End Swipe Functionality Styles */
+
+/* Lazy loading demo links */
+.demo-links {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.demo-links.loaded {
+    opacity: 1;
+}
+
+/* Improved accessibility and performance */
+.trick:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Optimize images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Add preload hint for better font loading when custom fonts are used */
+/* @font-face {
+    font-display: swap;
+} */
+
+/* Optimize animations with will-change */
+.box {
+    will-change: background-color, border-color;
+}
+
+/* Reduce paint operations */
+.trick {
+    contain: layout style paint;
+}
+
+/* Optimize scroll performance */
+* {
+    box-sizing: border-box;
+}
+
+/* Prevent layout shifts */
+.swipe-slide {
+    min-height: 400px;
+}

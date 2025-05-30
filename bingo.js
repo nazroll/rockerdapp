@@ -1,4 +1,4 @@
-const tricksData = {
+  const tricksData = {
     "gazelle": [
         {"name": "Open Gazelle", "completed": false},
         {"name": "Closed Gazelle", "completed": false},
@@ -10,16 +10,38 @@ const tricksData = {
     ]
 }
 
+const frontTricksData = {
+  "gazelle": [
+      {"name": "Open Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/fog"},
+      {"name": "Closed Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/fcg"},
+  ],
+  "lion": [
+      {"name": "Open Lion", "completed": false, "link" : "https://billyarlew021217.wordpress.com/fol"},
+      {"name": "Closed Lion", "completed": false, "link" : "https://eccentricinline.com/fcl/"}
+  ]
+}
+
+const backTricksData = {
+  "gazelle": [
+      {"name": "Open Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bog"},
+      {"name": "Closed Gazelle", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bcg"},
+  ],
+  "lion": [
+      {"name": "Open Lion", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bol"},
+      {"name": "Closed Lion", "completed": false, "link" : "https://billyarlew021217.wordpress.com/bcl"}
+  ]
+}
+
 const bingoData = {
-    "title": "Billy's Wizard Bingo!",
+    "title": "Billy's Wizard Basics Bingo!",
     "legs": {
         "right": {
-            "front": tricksData,
-            "back": tricksData
+            "front": frontTricksData,
+            "back": backTricksData
         },
         "left": {
-            "front": tricksData,
-            "back": tricksData
+            "front": frontTricksData,
+            "back": backTricksData
         }
     }
 };
@@ -38,36 +60,81 @@ function generateTricksHTML(tricksArray, className = '', legType = '', position 
     return htmlOutput;
 }
 
-// Save game state to localStorage
-function saveGameState() {
-  const completedTricks = [];
-  document.querySelectorAll('.trick.completed').forEach(el => {
-    const trickId = el.dataset.trickId;
-    if (trickId) {
-      completedTricks.push(trickId);
+// Render tricks to specific container elements
+function renderTricksToElement(selector, tricksArray, className, legType, position) {
+    const container = document.querySelector(selector);
+    if (container) {
+        container.innerHTML += generateTricksHTML(tricksArray, className, legType, position);
     }
-  });
-  localStorage.setItem('billyBingoState', JSON.stringify(completedTricks));
-  console.log('Game state saved:', completedTricks);
 }
+
+// Save game state to localStorage with debouncing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+let completedTricksCache = null;
+
+function saveGameState() {
+    const completedTricks = Array.from(document.querySelectorAll('.trick.completed'))
+        .map(el => el.dataset.trickId)
+        .filter(Boolean);
+    
+    try {
+        localStorage.setItem('billyBingoState', JSON.stringify(completedTricks));
+        completedTricksCache = completedTricks;
+        console.log('Game state saved:', completedTricks);
+    } catch (error) {
+        console.warn('Failed to save game state:', error);
+    }
+}
+
+// Debounced save function
+const debouncedSave = debounce(saveGameState, 300);
 
 // Load game state from localStorage
 function loadGameState() {
-  const savedState = localStorage.getItem('billyBingoState');
-  if (savedState) {
-    const completedTricks = JSON.parse(savedState);
-    console.log('Loading game state:', completedTricks);
-    
-    completedTricks.forEach(trickId => {
-      const trickElement = document.querySelector(`[data-trick-id="${trickId}"]`);
-      if (trickElement) {
-        trickElement.classList.add('completed');
-      }
-    });
+  try {
+    const savedState = localStorage.getItem('billyBingoState');
+    if (savedState) {
+      const completedTricks = JSON.parse(savedState);
+      console.log('Loading game state:', completedTricks);
+      completedTricksCache = completedTricks;
+      
+      // Use requestAnimationFrame for better performance
+      requestAnimationFrame(() => {
+        completedTricks.forEach(trickId => {
+          const trickElement = document.querySelector(`[data-trick-id="${trickId}"]`);
+          if (trickElement) {
+            trickElement.classList.add('completed');
+          }
+        });
+      });
+    }
+  } catch (error) {
+    console.warn('Failed to load game state:', error);
   }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Render tricks to containers
+  renderTricksToElement('.front-right-tricks', bingoData.legs.right.front.gazelle, 'top', 'right', 'front');
+  renderTricksToElement('.front-right-tricks', bingoData.legs.right.front.lion, 'bottom', 'right', 'front');
+  renderTricksToElement('.back-right-tricks', bingoData.legs.right.back.gazelle, 'top', 'right', 'back');
+  renderTricksToElement('.back-right-tricks', bingoData.legs.right.back.lion, 'bottom', 'right', 'back');
+  renderTricksToElement('.front-left-tricks', bingoData.legs.left.front.gazelle, 'top', 'left', 'front');
+  renderTricksToElement('.front-left-tricks', bingoData.legs.left.front.lion, 'bottom', 'left', 'front');
+  renderTricksToElement('.back-left-tricks', bingoData.legs.left.back.gazelle, 'top', 'left', 'back');
+  renderTricksToElement('.back-left-tricks', bingoData.legs.left.back.lion, 'bottom', 'left', 'back');
+
   const swipeContainer = document.querySelector('.swipe-container');
   if (!swipeContainer) return;
 
@@ -75,16 +142,37 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentSlide = 0;
   const totalSlides = slides.length;
 
+  document.querySelector('.app-header').textContent = bingoData.title;
+
   function updateSlidePosition() {
+    console.log('updateSlidePosition called, currentSlide:', currentSlide);
     const x = `translate3d(-${currentSlide * 100}%, 0, 0)`;  // use 3d for better Safari compatibility
-    swipeContainer.style.transform       = x;
+    console.log('Transform value:', x);
+    swipeContainer.style.transform = x;
     swipeContainer.style.webkitTransform = x;    // correct vendor prefix
+    
+    // Add loading state for better UX
+    swipeContainer.classList.add('transitioning');
+    setTimeout(() => {
+      swipeContainer.classList.remove('transitioning');
+    }, 300);
     
     // Force browser to acknowledge the transform change
     swipeContainer.offsetHeight;
-    
-    console.log(`Updated to slide ${currentSlide}: ${x}`)
   }
+
+  // Expose functions globally for jQuery event handlers
+  window.goToSlide = function(slideNumber) {
+    currentSlide = slideNumber;
+    updateSlidePosition();
+  };
+
+  window.goToSide = function(side) {
+    console.log('goToSide called with:', side);
+    currentSlide = (side === 'right') ? 1 : 2;
+    console.log('Setting currentSlide to:', currentSlide);
+    updateSlidePosition();
+  };
 
   // Basic Touch Swipe Functionality
   let touchstartX = 0;
@@ -130,39 +218,37 @@ document.addEventListener('DOMContentLoaded', function() {
       touchstartX = 0;
       touchendX = 0;
   }
-  
-  // wire up “choose-side” links
-  const slideLinks = document.querySelectorAll('.choose-side');
-  Array.prototype.forEach.call(slideLinks, link => {
-    link.addEventListener('click', e => {
-      e.preventDefault();
-      // read data-side, not dataset.slide
-      const side = e.currentTarget.dataset.side;
-      currentSlide = (side === 'right') ? 1 : 2;
-      updateSlidePosition();
-    });
-  });
-
-  const appLink = document.querySelector('.app-header');
-  if (appLink) {
-    appLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      currentSlide = 0;
-      updateSlidePosition();
-    });
-  }
 
   updateSlidePosition();
 
   // Load saved state from localStorage
   loadGameState();
 
-  // wire up click events on each trick to toggle completed state
-  const trickElements = document.querySelectorAll('.trick');
-  trickElements.forEach(el => {
-    el.addEventListener('click', () => {
-      el.classList.toggle('completed');
-      saveGameState();
+  // jQuery event delegation for better performance (wait for jQuery to be available)
+  $(document).ready(function() {
+    $(document).on('click', '.trick', function() {
+      $(this).toggleClass('completed');
+      debouncedSave(); // Use debounced save
+    });
+    
+    $(document).on('click', '.choose-side', function(e) {
+      e.preventDefault();
+      const side = $(this).data('side');
+      console.log('Choose side clicked:', side);
+      console.log('goToSide function exists:', typeof window.goToSide);
+      if (window.goToSide) {
+        window.goToSide(side);
+        console.log('Called goToSide with:', side);
+      } else {
+        console.error('goToSide function not found');
+      }
+    });
+    
+    $(document).on('click', '.app-header', function(e) {
+      e.preventDefault();
+      if (window.goToSlide) {
+        window.goToSlide(0);
+      }
     });
   });
 });
