@@ -1,6 +1,7 @@
 /* Modern CSS Performance Optimizations */
 .bingo {
     contain: layout style paint; /* Optimize repaints */
+    max-width: 540px;
 }
 
 #header {
@@ -92,8 +93,6 @@
 }
 .front-right-leg .row .col-2, .back-right-leg .row .col-2, 
 .front-left-leg .row .col-2, .back-left-leg .row .col-2 {
-    margin: 0;
-    padding: 0;
     background-color: #eee;
 }
 .tricks, .trick {
@@ -101,6 +100,7 @@
 }
 .tricks {
     margin: 0;
+    padding-left: 12px;
 }
 .tricks.top {
     margin-bottom: 12px;
@@ -246,6 +246,9 @@ img {
     contain: layout style paint;
 }
 
+.col-6.trick {
+    padding-left: 0;
+}
 /* Optimize scroll performance */
 * {
     box-sizing: border-box;
