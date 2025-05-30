@@ -9,6 +9,7 @@ const tricksData = {
         {"name": "Closed Lion", "completed": false}
     ]
 }
+
 const bingoData = {
     "title": "Billy's Wizard Bingo!",
     "legs": {
@@ -78,13 +79,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // wire up “choose-side” links
-  const sideLinks = document.querySelectorAll('.choose-side');
-  Array.prototype.forEach.call(sideLinks, link => {
+  const slideLinks = document.querySelectorAll('.choose-side');
+  Array.prototype.forEach.call(slideLinks, link => {
     link.addEventListener('click', e => {
       e.preventDefault();
       // read data-side, not dataset.slide
-      const side = e.currentTarget.dataset.side;
-      currentSlide = (side === 'right') ? 1 : 2;
+      const side = e.currentTarget.dataset.slide;
+      currentSlide = (slide === 'right') ? 1 : 2;
       updateSlidePosition();
     });
   });
