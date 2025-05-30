@@ -24,11 +24,13 @@ const bingoData = {
     }
 };
 
-function generateTricksHTML(tricksArray, className = '') {
+function generateTricksHTML(tricksArray, className = '', legType = '', position = '') {
     let htmlOutput = `<div class="row tricks ${className}">`;
-    tricksArray.forEach(trick => {
+    tricksArray.forEach((trick, index) => {
+        const completedClass = trick.completed ? 'completed' : '';
+        const trickId = `${legType}-${position}-${className}-${index}`;
         htmlOutput += `
-    <div class="col-6 trick">
+    <div class="col-6 trick ${completedClass}" data-trick-id="${trickId}">
         <div class="box">${trick.name}</div>
     </div>`;
     });
@@ -114,11 +116,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
   updateSlidePosition();
 
+  // Load saved state from localStorage
+  loadGameState();
+
   // wire up click events on each trick to toggle completed state
   const trickElements = document.querySelectorAll('.trick');
   trickElements.forEach(el => {
     el.addEventListener('click', () => {
       el.classList.toggle('completed');
+      saveGameState();
     });
   });
 });
+
+// Save game state to localStorage
+function saveGameState() {
+  const completedTricks = [];
+  document.querySelectorAll('.trick.completed').forEach(el => {
+    const trickId = el.dataset.trickId;
+    if (trickId) {
+      completedTricks.push(trickId);
+    }
+  });
+  localStorage.setItem('billyBingoState', JSON.stringify(completedTricks));
+  console.log('Game state saved:', completedTricks);
+}
+
+// Load game state from localStorage
+function loadGameState() {
+  const savedState = localStorage.getItem('billyBingoState');
+  if (savedState) {
+    const completedTricks = JSON.parse(savedState);
+    console.log('Loading game state:', completedTricks);
+    
+    completedTricks.forEach(trickId => {
+      const trickElement = document.querySelector(`[data-trick-id="${trickId}"]`);
+      if (trickElement) {
+        trickElement.classList.add('completed');
+      }
+    });
+  }
+}
