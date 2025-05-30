@@ -15,7 +15,6 @@
     font-size: 1.5em;
     text-transform: uppercase;
     text-align: center;
-    margin: 0; /* Reset browser default margins */
 }
 
 #header h1 a, #footer a {
