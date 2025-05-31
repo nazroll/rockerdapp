@@ -3,9 +3,9 @@
 An interactive web application for tracking progress in learning fundamental inline skating "wizard" moves. Built as a gamified bingo-style tracker to help skaters master the essential moves.
 
 ![Screenshot 1](docs/wizard-base-bingo-1.png)
-![Screenshot 1](docs/wizard-base-bingo-2.png)
-![Screenshot 1](docs/wizard-base-bingo-4.png)
-![Screenshot 1](docs/wizard-base-bingo-3.png)
+![Screenshot 2](docs/wizard-base-bingo-2.png)
+![Screenshot 3](docs/wizard-base-bingo-4.png)
+![Screenshot 4](docs/wizard-base-bingo-3.png)
 
 ## 🎯 Features
 
