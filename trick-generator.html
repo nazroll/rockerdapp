@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHPRCTE9YY"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-JHPRCTE9YY');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Generate random tricks for wizard skaters. Perfect for sessions!">
+    <meta name="keywords" content="inline skating, wizard basics, bingo, training, tricks">
+    <meta name="author" content="nazrooooll">
+    
+    <!-- Performance optimizations -->
+    <link rel="preconnect" href="https://stackpath.bootstrapcdn.com">
+    <link rel="preconnect" href="https://code.jquery.com">
+    
+    <title>Wizard Tricks Generator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./trick-generator.css" rel="stylesheet">
+    <script type="text/javascript" src="./trick-generator.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8 col-md-10">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h1 class="card-title mb-0">Wizard Tricks Generator</h1>
+                        <p class="mb-0">Spin the slots to generate your next trick combination!</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Slot Machine Display -->
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-header text-center bg-warning">
+                                        <h5 class="mb-0">Triangle</h5>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div id="triangleSlot" class="display-6 text-primary fw-bold min-height-slot">
+                                            Ready to spin!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-header text-center bg-success text-white">
+                                        <h5 class="mb-0">Circle</h5>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div id="circleSlot" class="display-6 text-success fw-bold min-height-slot">
+                                            Ready to spin!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <div class="text-center mb-4">
+                            <button id="generateBtn" class="btn btn-primary btn-lg px-5 py-3">
+                                <i class="fas fa-dice"></i> Generate Trick
+                            </button>
+                        </div>
+
+                        <!-- Result Display -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="alert alert-info text-center" role="alert">
+                                    <h4 class="alert-heading">Your Trick Combination:</h4>
+                                    <div id="trickResult" class="display-6 fw-bold text-dark">
+                                        Click "Generate Trick" to get started!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card border-secondary">
+                                    <div class="card-header bg-secondary text-white">
+                                        <h5 class="mb-0">📝 How to Use</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ol class="mb-0">
+                                            <li>Click the "Generate Trick" button to start the slot machine</li>
+                                            <li>Watch as the slots spin through different combinations</li>
+                                            <li>When they stop, you'll get a unique trick combination to practice</li>
+                                            <li>Challenge yourself to master the combination!</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
