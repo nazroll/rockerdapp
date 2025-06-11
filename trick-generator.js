@@ -1,11 +1,11 @@
-const triangleList = [
+const triangleTricks = [
   "Front Open",
   "Front Closed", 
   "Back Open",
   "Back Closed"
 ];
 
-const circleList = [
+const circleTricks = [
   "Predator",
   "Tree",
   "Gazelle",
@@ -38,68 +38,82 @@ const circleList = [
   "Blindfolded"
 ];
 
-class SlotMachine {
-  constructor() {
-    this.isSpinning = false;
-    this.spinDuration = 2000; // 2 seconds
-    this.intervalSpeed = 100; // 100ms between changes
-  }
+class TrickGenerator {
+    constructor() {
+        this.triangleSlot = document.getElementById('triangleSlot');
+        this.circleSlot = document.getElementById('circleSlot');
+        this.generateBtn = document.getElementById('generateBtn');
+        this.trickResult = document.getElementById('trickResult');
+        this.isGenerating = false;
+        
+        this.init();
+    }
+    
+    init() {
+        this.generateBtn.addEventListener('click', () => this.generateTrick());
+    }
+    
+    async generateTrick() {
+        if (this.isGenerating) return;
+        
+        this.isGenerating = true;
+        this.generateBtn.disabled = true;
+        this.generateBtn.textContent = 'Generating...';
+        
+        // Add spinning animation
+        this.triangleSlot.classList.add('spinning');
+        this.circleSlot.classList.add('spinning');
 
-  getRandomFromArray(array) {
-    return array[Math.floor(Math.random() * array.length)];
-  }
+        this.trickResult.classList.add('d-none');
 
-  spin() {
-    if (this.isSpinning) return;
+        // Simulate slot machine effect
+        await this.animateSlots();
+        
+        // Generate final results
+        const triangleResult = this.getRandomItem(triangleTricks);
+        const circleResult = this.getRandomItem(circleTricks);
+        
+        // Display results
+        this.triangleSlot.textContent = triangleResult;
+        this.circleSlot.textContent = circleResult;
+        
+        // Update main result
+        this.trickResult.textContent = `${triangleResult} ${circleResult}`;
+        this.trickResult.classList.add('success');
+        
+        // Remove spinning animation
+        this.triangleSlot.classList.remove('spinning');
+        this.circleSlot.classList.remove('spinning');
+        
+        // Reset button
+        this.generateBtn.disabled = false;
+        this.generateBtn.textContent = 'Generate';
+        this.isGenerating = false;
+    }
     
-    this.isSpinning = true;
-    const triangleSlot = document.getElementById('triangleSlot');
-    const circleSlot = document.getElementById('circleSlot');
-    const generateBtn = document.getElementById('generateBtn');
-    const resultDiv = document.getElementById('trickResult');
+    async animateSlots() {
+        const duration = 1500; // 1.5 seconds
+        const interval = 100; // Update every 100ms
+        const steps = duration / interval;
+        
+        for (let i = 0; i < steps; i++) {
+            this.triangleSlot.textContent = this.getRandomItem(triangleTricks);
+            this.circleSlot.textContent = this.getRandomItem(circleTricks);
+            
+            await this.delay(interval);
+        }
+    }
     
-    // Disable button during spin
-    generateBtn.disabled = true;
-    generateBtn.textContent = 'Spinning...';
+    getRandomItem(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
     
-    // Clear previous result
-    resultDiv.textContent = '';
-    
-    // Start spinning animation
-    const spinInterval = setInterval(() => {
-      triangleSlot.textContent = this.getRandomFromArray(triangleList);
-      circleSlot.textContent = this.getRandomFromArray(circleList);
-    }, this.intervalSpeed);
-    
-    // Stop spinning after duration
-    setTimeout(() => {
-      clearInterval(spinInterval);
-      
-      // Final selection
-      const selectedTriangle = this.getRandomFromArray(triangleList);
-      const selectedCircle = this.getRandomFromArray(circleList);
-      
-      triangleSlot.textContent = selectedTriangle;
-      circleSlot.textContent = selectedCircle;
-      
-      // Generate combined trick
-      const combinedTrick = `${selectedTriangle} + ${selectedCircle}`;
-      resultDiv.textContent = `Your trick: ${combinedTrick}`;
-      
-      // Re-enable button
-      generateBtn.disabled = false;
-      generateBtn.textContent = 'Spin Again!';
-      this.isSpinning = false;
-    }, this.spinDuration);
-  }
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 }
 
-// Initialize slot machine when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  const slotMachine = new SlotMachine();
-  const generateBtn = document.getElementById('generateBtn');
-  
-  if (generateBtn) {
-    generateBtn.addEventListener('click', () => slotMachine.spin());
-  }
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new TrickGenerator();
 });
