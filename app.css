@@ -1,4 +1,25 @@
 .rockerd {
-    max-width: 480px;
+    max-width: 576px;
 }
 
+#header {
+    display: none;
+}
+
+#footer {
+    border-top: solid 1px #eee;
+    padding: 12px 0;
+}
+
+.trick {
+   font-size: 2rem;
+}
+
+.trick > .start, .trick > .end {
+    font-size: 1.5rem;
+}
+
+
+.trick > .col-1 {
+    font-size: 1rem;
+}
