@@ -14,6 +14,8 @@
     border-top: solid 1px #eee;
     padding: 12px 0;
     font-size: 0.8rem;
+    margin-top: 16px;
+    display: none;
 }
 
 .trick {
@@ -31,5 +33,5 @@
 }
 
 .list-completed {
-    font-size: 0.75em;
+    font-size: 0.85em;
 }
