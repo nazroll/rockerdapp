@@ -35,25 +35,28 @@
             <h2 class="fw-bold">Magic Moves</h2>
             <p class="lead">Conjure the next combo!</p>
         </div>
-        <div class="border rounded-pill shadow-lg my-5">
-            <div class="row py-4 text-capitalize trick">
-                <div class="col fw-bold text-center"><span class="start">Front open</span> <span class="end">Gazelle</span></div> 
+        <div id="mmWrapper" class="border rounded-5 shadow-sm my-5">
+            <div class="row py-4 trick text-secondary" id="magicMoves">
+                <div class="col fw-bold text-center">
+                    <span id="trickStart">⚡</span> 
+                    <span id="trickEnd">No combo yet</span>
+                </div> 
             </div>
         </div>
         <div class="row py-4">
             <div class="col-12">
-                <button type="button" class="btn btn-primary btn-lg w-100">Generate Combo</button>
+                <button type="button" id="btnGenerateCombo" class="btn btn-primary btn-lg w-100 rounded-pill btn-generate-combo">Generate Combo</button>
             </div>
         </div>
         
-        <div id="footer" class="text-end">
-            <p>Made with &#129505; by <a href="https://nazroll.com" target="_blank">nazroll</a></p>
+        <div id="footer">
+            <p>Made with &#129505; by Rocker'd &mdash; <a href="/about.html">About</a></p>
         </div>
     </div>
     
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/magicmoves.js"></script>
 </body>
 </html>
