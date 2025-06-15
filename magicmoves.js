@@ -120,6 +120,19 @@ class TrickGenerator {
         // Generate final results
         const triangleResult = this.getRandomItem(triangleTricks);
         const circleResult = this.getRandomItem(circleTricks);
+
+        // Track the combo generation with Google Analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'generate_combo', {
+                'event_category': 'Magic Moves',
+                'event_label': `${triangleResult} + ${circleResult}`,
+                'custom_parameters': {
+                    'triangle_trick': triangleResult,
+                    'circle_trick': circleResult,
+                    'full_combo': `${triangleResult} + ${circleResult}`
+                }
+            });
+        }
         
         // Display results
         this.triangleSlot.textContent = triangleResult;
